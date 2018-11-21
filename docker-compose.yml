@@ -1,0 +1,22 @@
+version: "3.7"
+services:
+  gitlab-ce:
+    env_file: .env 
+    image: gitlab/gitlab-ce:latest
+    container_name: gitlab
+    hostname: ${HOST_NAME}
+    ports:
+      - "${HTTPS_PORT}:443"
+      - "${HTTP_PORT}:80"
+      - "${SSH_PORT}:22"
+    restart: always
+    volumes:
+      - "$PWD/volumes/config:/etc/gitlab"
+      - "$PWD/volumes/logs:/var/log/gitlab"
+      - "$PWD/volumes/data:/var/opt/gitlab"
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'http://${HOST_NAME}:${HTTP_PORT}'
+        gitlab_rails['gitlab_shell_ssh_port'] = ${SSH_PORT}
+        nginx['listen_port'] = 80
+
